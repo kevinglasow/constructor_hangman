@@ -3,6 +3,9 @@ var inquirer = require("inquirer");
 var Word = require("./word");
 var List = require("./wordlist");
 
+var winCount = 0;
+var lossCount = 0;
+
 // Hangman object that will store the necessary data
 var hangman = {
     wordBank: List.chosenWord.wordList,
@@ -19,19 +22,19 @@ var hangman = {
         inquirer.prompt([{
             name: "play",
             type: "confirm",
-            message: "Do you want to play hangman?"
+            message: "Do you want to play Starwars hangman?"
         }]).then(function (answer) {
             if (answer.play) {
                 that.newGame();
             } else {
-                console.log("Come back when you're ready.");
+                console.log("I find your lack of faith disturbing.");
             }
         })
     },
     newGame: function () {
         if (this.guessesRemaining === 10) {
-            console.log("Good luck!");
-            console.log("");
+            console.log("May the Force be with you.");
+            console.log("");    
             // getting a random word
             var randNum = Math.floor(Math.random() * this.wordBank.length);
             this.currentWord = new Word(this.wordBank[randNum]);
@@ -56,7 +59,7 @@ var hangman = {
             message: "Please guess a letter:",
             // validate if the user input is exactly one letter
             validate: function (value) {
-                if (value.length === 1) {
+                if (value.length === 1 && Number.isNaN(parseFloat(value))) {
                     return true;
                 } else {
                     return false;
@@ -92,6 +95,11 @@ var hangman = {
                     if (that.currentWord.didWeFindTheWord() === true) {
                         console.log(that.currentWord.wordRender());
                         console.log("Congratulations! You win!");
+                        winCount++
+                        console.log("Total Wins: " + winCount)
+                        console.log("Total Losses: " + lossCount)
+                        hangman.startGame()
+                        
                     } else {
                         // Show the remaining guesses
                         console.log("Guesses remaining: " + that.guessesRemaining);
@@ -105,6 +113,10 @@ var hangman = {
                 } else if (that.guessesRemaining === 0) {
                     console.log("Game over!");
                     console.log("The right answer was: " + that.currentWord.word);
+                    lossCount++
+                    console.log("Total Wins: " + winCount)
+                    console.log("Total Losses: " + lossCount)
+                    hangman.startGame()
                 }
             } else {
                 console.log("Please pick a letter that wasn't already guessed.")
